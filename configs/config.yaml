@@ -1,0 +1,186 @@
+# 数据源配置
+data_sources:
+  # Tushare Pro配置
+  tushare:
+    token: "your_tushare_token_here"
+    api_url: "http://api.tushare.pro"
+  
+  # AkShare配置（无需token）
+  akshare:
+    enabled: true
+
+# 数据库配置
+database:
+  type: "sqlite"  # sqlite / postgresql
+  path: "data/stock_data.db"
+  # PostgreSQL配置（如使用）
+  # host: "localhost"
+  # port: 5432
+  # username: "user"
+  # password: "password"
+  # database: "stock_db"
+
+# Redis缓存配置
+redis:
+  enabled: false
+  host: "localhost"
+  port: 6379
+  db: 0
+
+# 机构探测配置
+institutional_detection:
+  # 机构持仓变化阈值（百分比）
+  position_change_threshold: 10
+  
+  # 主力资金净流入阈值（万元）
+  fund_flow_threshold: 1000
+  
+  # 龙虎榜机构席位数量阈值
+  lhb_institution_threshold: 2
+  
+  # 北向资金持股变化阈值（百分比）
+  northbound_change_threshold: 5
+
+# 特征工程配置
+features:
+  # 技术指标参数
+  technical:
+    ma_periods: [5, 10, 20, 60]
+    ema_periods: [12, 26]
+    rsi_period: 14
+    macd_params: [12, 26, 9]
+    kdj_params: [9, 3, 3]
+    boll_params: [20, 2]
+  
+  # 时间窗口（天）
+  lookback_window: 60
+  
+  # 预测窗口（天）
+  forecast_window: 10
+
+# 爆发定义
+outbreak_definition:
+  # 短期爆发（5日）
+  short_term:
+    days: 5
+    min_return: 0.15  # 15%
+    volume_ratio: 2.0  # 成交量放大倍数
+  
+  # 中期爆发（10日）
+  medium_term:
+    days: 10
+    min_return: 0.25  # 25%
+    volume_ratio: 2.0
+
+# 模型配置
+models:
+  # LSTM模型
+  lstm:
+    enabled: true
+    sequence_length: 60
+    hidden_units: [128, 64]
+    dropout: 0.2
+    epochs: 100
+    batch_size: 32
+    learning_rate: 0.001
+  
+  # XGBoost模型
+  xgboost:
+    enabled: true
+    max_depth: 6
+    n_estimators: 100
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+  
+  # Transformer模型
+  transformer:
+    enabled: true
+    d_model: 128
+    nhead: 8
+    num_layers: 4
+    dropout: 0.1
+    epochs: 50
+    batch_size: 16
+  
+  # 集成模型
+  ensemble:
+    enabled: true
+    voting: "soft"  # soft / hard
+    weights: [0.3, 0.4, 0.3]  # LSTM, XGBoost, Transformer
+
+# 预测服务配置
+prediction:
+  # 预测概率阈值
+  probability_threshold: 0.6
+  
+  # 置信度阈值
+  confidence_threshold: 0.7
+  
+  # 批量预测最大股票数
+  max_batch_size: 100
+
+# 股票筛选配置
+screening:
+  # 市值范围（亿元）
+  market_cap:
+    min: 50
+    max: 10000
+  
+  # 排除ST股票
+  exclude_st: true
+  
+  # 排除新股（上市天数）
+  exclude_new_stock_days: 60
+  
+  # 最小成交额（万元）
+  min_turnover: 5000
+
+# Web服务配置
+web:
+  host: "0.0.0.0"
+  port: 5000
+  debug: true
+  
+  # API限流
+  rate_limit:
+    enabled: true
+    requests_per_minute: 60
+
+# 日志配置
+logging:
+  level: "INFO"  # DEBUG / INFO / WARNING / ERROR
+  file: "logs/stock_prediction.log"
+  max_bytes: 10485760  # 10MB
+  backup_count: 5
+
+# 回测配置
+backtest:
+  # 回测起始日期
+  start_date: "2020-01-01"
+  
+  # 回测结束日期
+  end_date: "2024-12-31"
+  
+  # 初始资金（元）
+  initial_capital: 100000
+  
+  # 单只股票最大仓位
+  max_position_size: 0.2
+  
+  # 手续费率
+  commission_rate: 0.0003
+  
+  # 印花税率
+  stamp_duty_rate: 0.001
+
+# 数据更新配置
+data_update:
+  # 自动更新
+  auto_update: true
+  
+  # 更新时间（24小时制）
+  update_time: "18:00"
+  
+  # 更新频率（天）
+  update_frequency: 1
