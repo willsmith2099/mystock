@@ -43,7 +43,10 @@ venv.bak/
 *.ipynb
 
 # Data files
-data/
+data/*
+!data/.gitkeep
+!data/*/
+!data/*/.gitkeep
 *.csv
 *.xlsx
 *.xls
