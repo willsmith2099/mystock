@@ -6,6 +6,7 @@ data_sources:
     api_url: "http://api.tushare.pro"
   
   # AkShare配置（无需token）
+  # 默认使用东方财富，失败自动切换至新浪财经
   akshare:
     enabled: true
 

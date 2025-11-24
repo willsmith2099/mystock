@@ -88,12 +88,32 @@ stock/
 
 ### 快速开始
 
-#### 1. 安装依赖
+#### 方式1：使用 Docker（推荐）
+
+```bash
+# 进入docker目录
+cd docker
+
+# 启动服务
+docker-compose up -d
+
+# 运行演示
+docker-compose exec stock python scripts/quick_start.py
+
+# 股票预测
+docker-compose exec stock python scripts/predict_stock.py 600519
+```
+
+📖 详细文档：[Docker使用指南](docs/DOCKER.md)
+
+#### 方式2：本地安装
+
+**1. 安装依赖**
 ```bash
 pip install -r requirements.txt
 ```
 
-#### 2. 配置数据源（可选）
+**2. 配置数据源（可选）**
 编辑 `configs/config.yaml`：
 ```yaml
 data_sources:
@@ -101,12 +121,12 @@ data_sources:
     token: "your_tushare_token_here"  # 可选
 ```
 
-#### 3. 运行快速演示
+**3. 运行快速演示**
 ```bash
 python scripts/quick_start.py
 ```
 
-#### 4. 股票预测
+**4. 股票预测**
 ```bash
 # 单次预测
 python scripts/predict_stock.py 600519
@@ -258,12 +278,32 @@ stock/
 
 ### Quick Start
 
-#### 1. Install Dependencies
+#### Option 1: Using Docker (Recommended)
+
+```bash
+# Enter docker directory
+cd docker
+
+# Start services
+docker-compose up -d
+
+# Run demo
+docker-compose exec stock python scripts/quick_start.py
+
+# Stock prediction
+docker-compose exec stock python scripts/predict_stock.py 600519
+```
+
+📖 Detailed docs: [Docker Usage Guide](docs/DOCKER.md)
+
+#### Option 2: Local Installation
+
+**1. Install Dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-#### 2. Configure Data Sources (Optional)
+**2. Configure Data Sources (Optional)**
 Edit `configs/config.yaml`:
 ```yaml
 data_sources:
@@ -271,12 +311,12 @@ data_sources:
     token: "your_tushare_token_here"  # Optional
 ```
 
-#### 3. Run Quick Demo
+**3. Run Quick Demo**
 ```bash
 python scripts/quick_start.py
 ```
 
-#### 4. Stock Prediction
+**4. Stock Prediction**
 ```bash
 # Single prediction
 python scripts/predict_stock.py 600519

@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  stock:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: mystock:latest
+    container_name: stock-prediction
+    restart: unless-stopped
+    
+    # Environment variables
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=Asia/Shanghai
+      - APP_ENV=production
+    
+    # Port mapping
+    ports:
+      - "8000:8000"  # FastAPI
+    
+    # Volume mounts for data persistence
+    volumes:
+      - ../data:/app/data
+      - ../logs:/app/logs
+      - ../configs:/app/configs:ro  # Read-only config
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Network
+    networks:
+      - stock-network
+    
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  stock-network:
+    driver: bridge
+
+# Optional: Add database service if needed
+# Uncomment below to add PostgreSQL or MySQL
+#
+# services:
+#   postgres:
+#     image: postgres:15-alpine
+#     container_name: stock-db
+#     restart: unless-stopped
+#     environment:
+#       - POSTGRES_DB=stock_db
+#       - POSTGRES_USER=stock_user
+#       - POSTGRES_PASSWORD=stock_password
+#     volumes:
+#       - postgres-data:/var/lib/postgresql/data
+#     networks:
+#       - stock-network
+#     ports:
+#       - "5432:5432"
+#
+# volumes:
+#   postgres-data:

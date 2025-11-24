@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Watchlist | 股票爆发预测系统</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav glass-header">
+            <div class="nav-left">
+                <div class="logo">
+                    <span class="icon">📈</span>
+                    <h1>Stock Watchlist</h1>
+                </div>
+                <ul class="nav-links">
+                    <li class="active">自选股</li>
+                    <li>智能选股</li>
+                    <li>全景看盘</li>
+                    <li>板块监测</li>
+                    <li>资金流向</li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="search-container">
+                    <input type="text" id="stock-search" placeholder="代码/简称/拼音">
+                    <div id="search-results" class="search-results hidden"></div>
+                </div>
+                <button id="theme-toggle" class="icon-btn" aria-label="Toggle Dark Mode">
+                    <span class="moon-icon">🌙</span>
+                    <span class="sun-icon">☀️</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Market Indices Bar -->
+        <div class="market-indices glass-card">
+            <div class="index-item">
+                <span class="index-name">上证指数</span>
+                <span class="index-value text-up">3050.12</span>
+                <span class="index-change text-up">+0.52%</span>
+            </div>
+            <div class="index-item">
+                <span class="index-name">深证成指</span>
+                <span class="index-value text-up">9850.33</span>
+                <span class="index-change text-up">+0.38%</span>
+            </div>
+            <div class="index-item">
+                <span class="index-name">创业板指</span>
+                <span class="index-value text-down">1950.22</span>
+                <span class="index-change text-down">-0.15%</span>
+            </div>
+            <div class="index-item">
+                <span class="index-name">北向资金</span>
+                <span class="index-value text-up">+25.6亿</span>
+            </div>
+        </div>
+
+        <main>
+            <div class="watchlist-container glass-card">
+                <div class="table-header-controls">
+                    <h3>我的自选</h3>
+                    <div class="stats-summary">
+                        <span>共 <span id="watchlist-count">0</span> 只</span>
+                        <span class="divider">|</span>
+                        <span>更新: <span id="last-update">--:--:--</span></span>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="stock-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">序号</th>
+                                <th style="width: 80px;">代码</th>
+                                <th style="width: 100px;">名称</th>
+                                <th class="text-right">现价</th>
+                                <th class="text-right">涨跌幅</th>
+                                <th class="text-right">涨跌额</th>
+                                <th class="text-right">主力净流</th>
+                                <th class="text-right">RSI(6)</th>
+                                <th class="text-right">MA5</th>
+                                <th style="width: 100px;">走势</th>
+                                <th style="width: 50px;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="watchlist-body">
+                            <!-- Rows will be inserted here -->
+                        </tbody>
+                    </table>
+
+                    <div class="loading-skeleton" id="loading-skeleton">
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div id="toast-container"></div>
+    </div>
+
+    <template id="stock-row-template">
+        <tr class="stock-row" data-code="">
+            <td class="col-index">--</td>
+            <td class="col-code">--</td>
+            <td class="col-name">--</td>
+            <td class="col-price text-right">--</td>
+            <td class="col-pct text-right">--</td>
+            <td class="col-change text-right">--</td>
+            <td class="col-flow text-right">--</td>
+            <td class="col-rsi text-right">--</td>
+            <td class="col-ma5 text-right">--</td>
+            <td class="col-chart">
+                <canvas class="mini-chart" width="80" height="30"></canvas>
+            </td>
+            <td class="col-action">
+                <button class="remove-btn" title="Remove">×</button>
+            </td>
+        </tr>
+    </template>
+
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>

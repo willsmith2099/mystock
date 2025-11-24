@@ -38,7 +38,8 @@ redis>=4.3.0
 matplotlib>=3.5.0
 seaborn>=0.11.0
 plotly>=5.10.0
-mplfinance>=0.12.0
+# mplfinance doesn't have stable release for Python 3.12 yet, use beta
+mplfinance
 
 # 配置管理
 pyyaml>=6.0

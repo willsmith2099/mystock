@@ -98,35 +98,75 @@ class StockDataFetcher:
             symbol = stock_code.split('.')[0]
             
             try:
+                # 优先尝试东方财富 (Eastmoney)
                 df = ak.stock_zh_a_hist(
                     symbol=symbol,
                     period='daily',
                     start_date=start_date,
                     end_date=end_date,
-                    adjust="qfq"  # 前复权
+                    adjust="qfq"
                 )
-            except Exception as e:
-                print(f"AkShare获取数据失败: {str(e)}")
-                return pd.DataFrame()
-            
-            # 标准化列名：中文 -> 英文
-            if not df.empty:
-                column_mapping = {
-                    '日期': 'trade_date',
-                    '股票代码': 'ts_code',
-                    '开盘': 'open',
-                    '收盘': 'close',
-                    '最高': 'high',
-                    '最低': 'low',
-                    '成交量': 'vol',
-                    '成交额': 'amount',
-                    '振幅': 'amplitude',
-                    '涨跌幅': 'pct_chg',
-                    '涨跌额': 'change',
-                    '换手率': 'turnover_rate'
-                }
-                df = df.rename(columns=column_mapping)
                 
+                # 标准化列名：中文 -> 英文
+                if not df.empty:
+                    column_mapping = {
+                        '日期': 'trade_date',
+                        '股票代码': 'ts_code',
+                        '开盘': 'open',
+                        '收盘': 'close',
+                        '最高': 'high',
+                        '最低': 'low',
+                        '成交量': 'vol',
+                        '成交额': 'amount',
+                        '振幅': 'amplitude',
+                        '涨跌幅': 'pct_chg',
+                        '涨跌额': 'change',
+                        '换手率': 'turnover_rate'
+                    }
+                    df = df.rename(columns=column_mapping)
+            except Exception as e:
+                print(f"Eastmoney获取失败，尝试Sina: {str(e)}")
+                try:
+                    # 备用：新浪财经 (Sina)
+                    # 转换代码格式: 600519.SH -> sh600519
+                    sina_symbol = stock_code.lower().replace('.', '')
+                    if sina_symbol.endswith('bj'):
+                        # Sina可能不支持北交所或者格式不同，暂时忽略
+                        raise ValueError("Sina不支持北交所")
+                    
+                    # 调整sina_symbol顺序: 600519sh -> sh600519
+                    if sina_symbol.endswith('sh'):
+                        sina_symbol = 'sh' + sina_symbol[:-2]
+                    elif sina_symbol.endswith('sz'):
+                        sina_symbol = 'sz' + sina_symbol[:-2]
+                    
+                    df = ak.stock_zh_a_daily(
+                        symbol=sina_symbol,
+                        start_date=start_date,
+                        end_date=end_date
+                    )
+                    
+                    # 标准化列名
+                    if not df.empty:
+                        # Sina返回: date, open, high, low, close, volume, amount, outstanding_share, turnover
+                        df = df.rename(columns={
+                            'date': 'trade_date',
+                            'volume': 'vol'
+                        })
+                        # 计算涨跌幅等缺失字段
+                        df['pct_chg'] = df['close'].pct_change() * 100
+                        df['change'] = df['close'].diff()
+                        df['ts_code'] = stock_code
+                        
+                        # 填充第一天的NaN (如果需要)
+                        df = df.fillna(0)
+                        
+                except Exception as e2:
+                    print(f"Sina获取失败: {str(e2)}")
+                    return pd.DataFrame()
+            
+            # 通用处理
+            if not df.empty:
                 # 转换日期格式为 YYYYMMDD
                 if 'trade_date' in df.columns:
                     df['trade_date'] = pd.to_datetime(df['trade_date']).dt.strftime('%Y%m%d')
